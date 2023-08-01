@@ -15,20 +15,19 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "USERS")
-public class User {
+public class User extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
     private Long id;
 
     private UUID uuid;
 
-    private String email; // 이메일
+    private String email;
 
-    private String password; // 비밀번호
+    private String password;
 
-    private String nickname; // 닉네임
+    private String nickname; 
 
     @Enumerated(EnumType.STRING)
     private Role role;
