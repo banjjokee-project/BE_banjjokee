@@ -1,0 +1,10 @@
+package com.project.BE_banjjokee.dto;
+
+import lombok.Data;
+
+@Data
+public class SignUpDto {
+    String email;
+    String password;
+    String nickname;
+}
