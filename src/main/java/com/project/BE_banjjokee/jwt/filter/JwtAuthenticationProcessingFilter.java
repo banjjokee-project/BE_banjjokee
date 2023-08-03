@@ -19,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.project.BE_banjjokee.model.User;
 
 import java.io.IOException;
+import java.util.*;
 
 /**
  * Jwt 인증 필터
@@ -36,9 +37,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
-
-    private static final String NO_CHECK_URL = "/login"; // "/login"으로 들어오는 요청은 Filter 작동 X
-
+    //토큰 검사 하지 않는 URL
+    private static final HashSet<String> NO_CHECK_URL_SET = new HashSet(Set.of("/api/login", "/api/signup"));
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
@@ -46,9 +46,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().equals(NO_CHECK_URL)) {
-            filterChain.doFilter(request, response); // "/login" 요청이 들어오면, 다음 필터 호출
-            return; // return으로 이후 현재 필터 진행 막기 (안해주면 아래로 내려가서 계속 필터 진행시킴)
+        if (NO_CHECK_URL_SET.contains(request.getRequestURI())) {
+            filterChain.doFilter(request, response);
+            return; // return으로 이후 현재 필터 진행 막기
         }
 
         // 사용자 요청 헤더에서 RefreshToken 추출
@@ -56,13 +56,12 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
         // 사용자의 요청 헤더에 RefreshToken이 있는 경우는, AccessToken이 만료되어 요청한 경우밖에 없다.
         // 따라서, 위의 경우를 제외하면 추출한 refreshToken은 모두 null
         String refreshToken = jwtService.extractRefreshToken(request)
-                .filter(jwtService::isTokenValid)
+                .filter(jwtService::isRefreshTokenValid)
                 .orElse(null);
 
         // 리프레시 토큰이 요청 헤더에 존재했다면, 사용자가 AccessToken이 만료되어서
         // RefreshToken까지 보낸 것이므로 리프레시 토큰이 DB의 리프레시 토큰과 일치하는지 판단 후,
         // 일치한다면 AccessToken을 재발급해준다.
-        System.out.println(refreshToken);
         if (refreshToken != null) {
             checkRefreshTokenAndReIssueAccessToken(response, refreshToken);
             return; // RefreshToken을 보낸 경우에는 AccessToken을 재발급 하고 인증 처리는 하지 않게 하기위해 바로 return으로 필터 진행 막기
@@ -115,12 +114,23 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     public void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response,
                                                   FilterChain filterChain) throws ServletException, IOException {
         log.info("checkAccessTokenAndAuthentication() 호출");
-        jwtService.extractAccessToken(request)
-                .filter(jwtService::isTokenValid)
-                .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
-                        .ifPresent(email -> userRepository.findByEmail(email)
-                                .ifPresent(this::saveAuthentication)));
+        Optional<String> accessToken = jwtService.extractAccessToken(request);
 
+        if (!accessToken.isPresent()) {
+            log.error("유효한 JWT 토큰이 없습니다");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        if (!accessToken.map(jwtService::isTokenValid).orElse(false)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        accessToken.flatMap(jwtService::extractEmail)
+                .ifPresent(email -> userRepository.findByEmail(email)
+                        .ifPresent(this::saveAuthentication));
+        
         filterChain.doFilter(request, response);
     }
 
