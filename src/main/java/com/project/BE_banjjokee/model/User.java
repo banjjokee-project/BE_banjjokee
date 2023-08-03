@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -38,6 +40,12 @@ public class User extends BaseEntity{
     private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
 
     private String refreshToken; // 리프레시 토큰
+
+    @OneToMany(mappedBy = "writer")
+    private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Comment> comments = new ArrayList<>();
 
     public User (String email, String password, String nickname) {
         this.email = email;
