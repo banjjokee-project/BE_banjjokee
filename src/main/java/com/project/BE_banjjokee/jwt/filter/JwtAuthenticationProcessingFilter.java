@@ -38,7 +38,8 @@ import java.util.*;
 @Slf4j
 public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
     //토큰 검사 하지 않는 URL
-    private static final HashSet<String> NO_CHECK_URL_SET = new HashSet(Set.of("/api/login", "/api/signup"));
+    private static final HashSet<String> NO_CHECK_URL_SET = new HashSet(Set.of("/api/login", "/api/signup", "/oauth2/authorization/google",
+            "/login/oauth2/code/google", "/favicon.ico"));
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
@@ -46,6 +47,7 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        System.out.println(request.getRequestURI());
         if (NO_CHECK_URL_SET.contains(request.getRequestURI())) {
             filterChain.doFilter(request, response);
             return; // return으로 이후 현재 필터 진행 막기

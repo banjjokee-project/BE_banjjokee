@@ -8,9 +8,11 @@ import com.project.BE_banjjokee.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.project.BE_banjjokee.jwt.handler.CustomAuthenticationEntryPoint;
 import com.project.BE_banjjokee.jwt.handler.LoginFailureHandler;
 import com.project.BE_banjjokee.jwt.handler.LoginSuccessHandler;
+import com.project.BE_banjjokee.oauth2.CustomOAuth2UserService;
+import com.project.BE_banjjokee.oauth2.handler.OAuth2LoginFailureHandler;
+import com.project.BE_banjjokee.oauth2.handler.OAuth2LoginSuccessHandler;
 import com.project.BE_banjjokee.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -33,6 +35,9 @@ public class SecurityConfig {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -49,6 +54,10 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement ->
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 );
+        http.oauth2Login(oauth2 -> oauth2.userInfoEndpoint(
+                userInfoEndpointConfig -> userInfoEndpointConfig
+                        .userService(customOAuth2UserService))
+                .successHandler(oAuth2LoginSuccessHandler).failureHandler(oAuth2LoginFailureHandler));
 
         // 원래 스프링 시큐리티 필터 순서가 LogoutFilter 이후에 로그인 필터 동작
         // 따라서, LogoutFilter 이후에 우리가 만든 필터 동작하도록 설정
@@ -117,4 +126,5 @@ public class SecurityConfig {
         JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
         return jwtAuthenticationFilter;
     }
+
 }
