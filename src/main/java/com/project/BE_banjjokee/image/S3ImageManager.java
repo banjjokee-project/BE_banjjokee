@@ -28,13 +28,8 @@ public class S3ImageManager implements ImageManager {
 
     @Override
     public String uploadImage(MultipartFile multipartFile, UUID uuid) throws IOException, S3Exception {
-
-        if (multipartFile.isEmpty()) {
-            return null;
-        }
-
         String fileName = multipartFile.getOriginalFilename();
-        String key = createKey(uuid, fileName);
+        String key = createKey(fileName, uuid);
         byte[] bytes = multipartFile.getBytes();
         PutObjectRequest putOb = PutObjectRequest.builder()
                 .bucket(bucketName)
@@ -42,7 +37,7 @@ public class S3ImageManager implements ImageManager {
                 .build();
 
         s3.putObject(putOb, RequestBody.fromBytes(bytes));
-        return getUrl(uuid, fileName);
+        return getUrl(key);
     }
 
     @Override
@@ -50,19 +45,18 @@ public class S3ImageManager implements ImageManager {
         List<String> urls = new ArrayList<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
-            String url = uploadImage(multipartFile, uuid);
 
-            if (url != null) {
-                urls.add(uploadImage(multipartFile, uuid));
+            if (multipartFile.isEmpty()) {
+                continue;
             }
 
+            urls.add(uploadImage(multipartFile, uuid));
         }
 
         return urls;
     }
 
-    private String getUrl(UUID uuid, String fileName) throws S3Exception {
-        String key = createKey(uuid, fileName);
+    private String getUrl(String key) throws S3Exception {
         GetUrlRequest request = GetUrlRequest.builder()
                 .bucket(bucketName)
                 .key(key)
@@ -72,7 +66,7 @@ public class S3ImageManager implements ImageManager {
     }
 
     @Override
-    public String createKey(UUID uuid, String fileName) {
+    public String createKey(String fileName, UUID uuid) {
         return new StringBuffer()
                 .append(uuid.toString())
                 .append("/")
@@ -81,8 +75,7 @@ public class S3ImageManager implements ImageManager {
     }
 
     @Override
-    public void delete(UUID uuid, String fileName) {
-        String key = createKey(uuid, fileName);
+    public void delete(String key) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
