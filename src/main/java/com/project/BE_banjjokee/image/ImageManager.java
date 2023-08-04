@@ -12,8 +12,8 @@ public interface ImageManager {
 
     public List<String> uploadImages(List<MultipartFile> multipartFiles, UUID uuid) throws IOException;
 
-    public void delete(UUID uuid, String fileName);
+    public void delete(String key);
 
-    public String createKey(UUID uuid, String fileName);
+    public String createKey(String fileName, UUID uuid);
 
 }
