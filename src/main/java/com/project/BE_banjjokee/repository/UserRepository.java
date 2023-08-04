@@ -1,5 +1,6 @@
 package com.project.BE_banjjokee.repository;
 
+import com.project.BE_banjjokee.model.SocialType;
 import com.project.BE_banjjokee.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +12,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByNickname(String nickname);
 
     Optional<User> findByRefreshToken(String refreshToken);
+
+    Optional<User> findBySocialTypeAndSocialId(SocialType socialType, String socialId);
 }
