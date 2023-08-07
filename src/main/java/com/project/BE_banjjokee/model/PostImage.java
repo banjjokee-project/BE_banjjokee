@@ -1,6 +1,7 @@
 package com.project.BE_banjjokee.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -12,7 +13,8 @@ public class PostImage extends Image{
     @JoinColumn(name = "post_id")
     private Post post;
 
-    public static PostImage createPostImage(String key, Post post) {
+    @Builder
+    public static PostImage createPostImage(String key, String url, Post post) {
 
         PostImage image = new PostImage();
         image.setKey(key);
@@ -22,6 +24,10 @@ public class PostImage extends Image{
     }
 
     private void setPost(Post post) {
+        if (post == null) {
+            this.post = null;
+            return;
+        }
 
         this.post = post;
         post.getImages().add(this);
