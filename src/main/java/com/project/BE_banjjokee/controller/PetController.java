@@ -1,6 +1,7 @@
 package com.project.BE_banjjokee.controller;
 
 import com.project.BE_banjjokee.dto.AddPetDTO;
+import com.project.BE_banjjokee.dto.PetDTO;
 import com.project.BE_banjjokee.service.PetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -17,33 +18,33 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity createPet(@RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile,
+    public ResponseEntity<String> createPet(@RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile,
                                     @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(petService.createPet(addPetDTO, imgFile, userDetails.getUsername()));
     }
 
     @GetMapping
-    public ResponseEntity getPet(@AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseEntity<PetDTO> getPet(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(petService.getPet(userDetails.getUsername()));
     }
 
     @GetMapping(path = "/{petId}")
-    public ResponseEntity updateFormPet(@PathVariable Long petId) {
+    public ResponseEntity<AddPetDTO> updateFormPet(@PathVariable Long petId) {
         return ResponseEntity.ok(petService.getUpdatePet(petId));
     }
 
     @PatchMapping(path = "/{petId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity updatePet(@PathVariable Long petId, @RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile) {
+    public ResponseEntity<String> updatePet(@PathVariable Long petId, @RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile) {
         return ResponseEntity.ok(petService.updatePet(petId, addPetDTO, imgFile));
     }
 
     @DeleteMapping("/{petId}")
-    private ResponseEntity deletePet(@PathVariable Long petId) {
+    private ResponseEntity<String> deletePet(@PathVariable Long petId) {
         return ResponseEntity.ok(petService.deletePet(petId));
     }
 
     @PostMapping("/activate/{petId}")
-    private ResponseEntity activatePet(@PathVariable Long petId, @AuthenticationPrincipal UserDetails userDetails) {
+    private ResponseEntity<String> activatePet(@PathVariable Long petId, @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(petService.activatePet(userDetails.getUsername(), petId));
     }
 }
