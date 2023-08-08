@@ -14,30 +14,21 @@ public class PostImage extends Image{
     private Post post;
 
     @Builder
-    public static PostImage createPostImage(String key, String url, Post post) {
-
-        PostImage image = new PostImage();
-        image.setKey(key);
-        image.setPost(post);
-        return image;
-
+    public PostImage(String key, String url, Post post) {
+        setKey(key);
+        setUrl(url);
+        setPost(post);
     }
 
     private void setPost(Post post) {
-        if (post == null) {
-            this.post = null;
-            return;
+        if (post != null) {
+            this.post = post;
+            post.getImages().add(this);
         }
-
-        this.post = post;
-        post.getImages().add(this);
-
     }
 
     public void cut() {
-
         this.post = null;
-
     }
 
 }
