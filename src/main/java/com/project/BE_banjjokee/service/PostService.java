@@ -1,6 +1,8 @@
 package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.CreatePostRequest;
+import com.project.BE_banjjokee.dto.UserPostDTO;
+import com.project.BE_banjjokee.dto.findPostDTO;
 import com.project.BE_banjjokee.dto.findPostsDTO;
 import com.project.BE_banjjokee.image.ImageManager;
 import com.project.BE_banjjokee.model.Post;
@@ -43,6 +45,32 @@ public class PostService {
         }
 
         return post.getId();
+    }
+
+    public List<findPostsDTO> findPosts(int offset, int limit) {
+        List<Post> posts = postRepository.findPostsWithOffsetAndLimit(offset, limit + 3);
+        List<findPostsDTO> dtos = new ArrayList<>();
+
+        for (Post post : posts) {
+            String url = null;
+            if (!post.getImages().isEmpty()) {
+                url = post.getImages().get(0).getUrl();
+            }
+            dtos.add(new findPostsDTO(post.getId(), url));
+        }
+
+        return dtos;
+    }
+
+    public findPostDTO findPost(long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("게시글 존재하지 않습니다."));
+        return new findPostDTO(post);
+    }
+
+    public List<UserPostDTO> findUserPosts(String email) {
+        return postRepository.findByEmail(email).stream()
+                .map(UserPostDTO::new)
+                .toList();
     }
 
 }
