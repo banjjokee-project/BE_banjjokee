@@ -43,4 +43,10 @@ public class PostController {
         return new FindUserPostsResponse(postService.findUserPosts(userDetails.getUsername()));
     }
 
+    @PutMapping("/api/v1/post/{postId}")
+    public CreatePostResponse updatePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long postId, @ModelAttribute CreatePostRequest request) throws IOException {
+        Long id = postService.update(userDetails.getUsername(), postId, request.getContent(), request.getImages());
+        return new CreatePostResponse(id);
+    }
+
 }

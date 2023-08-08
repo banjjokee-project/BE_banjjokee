@@ -6,6 +6,7 @@ import com.project.BE_banjjokee.dto.findPostDTO;
 import com.project.BE_banjjokee.dto.findPostsDTO;
 import com.project.BE_banjjokee.image.ImageManager;
 import com.project.BE_banjjokee.model.Post;
+import com.project.BE_banjjokee.model.PostImage;
 import com.project.BE_banjjokee.model.User;
 import com.project.BE_banjjokee.repository.ImageRepository;
 import com.project.BE_banjjokee.repository.PostRepository;
@@ -13,6 +14,7 @@ import com.project.BE_banjjokee.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,6 +73,37 @@ public class PostService {
         return postRepository.findByEmail(email).stream()
                 .map(UserPostDTO::new)
                 .toList();
+    }
+
+    public Long update(String email, Long id, String content, List<MultipartFile> images) throws IOException, RuntimeException {
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+        if (!isAuthorizedUser(email, post)) {
+            throw new RuntimeException("잘못된 접근입니다.");
+        }
+        List<PostImage> removeImages = post.getImages();
+        int size = removeImages.size();
+
+        for (int i = size - 1; i >= 0; i--) {
+            PostImage image = post.getImages().get(i);
+            String key = image.getKey();
+
+            post.removeImage(image);
+            imageManager.delete(key);
+        }
+
+        post.change(content);
+
+        Map<String, String> imageInfos = imageManager.uploadImages(images, post.getWriter().getUuid());
+
+        for (String key : imageInfos.keySet()) {
+            imageRepository.save(post.createImage(key, imageInfos.get(key)));
+        }
+
+        return post.getId();
+    }
+
+    private boolean isAuthorizedUser(String email, Post post) {
+        return email.equals(post.getWriter().getEmail());
     }
 
 }

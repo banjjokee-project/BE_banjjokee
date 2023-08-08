@@ -2,12 +2,14 @@ package com.project.BE_banjjokee.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Post extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,7 +55,7 @@ public class Post extends BaseEntity {
         setContent(content);
     }
 
-    public Image createImage(String key, String url) {
+    public PostImage createImage(String key, String url) {
         return new PostImage(key, url, this);
     }
 
