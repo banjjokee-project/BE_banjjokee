@@ -1,6 +1,6 @@
 package com.project.BE_banjjokee.model;
 
-import com.project.BE_banjjokee.dto.ScheduleDTO;
+import com.project.BE_banjjokee.dto.AddScheduleDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,10 +28,10 @@ public class Schedule extends BaseEntity{
 
     private LocalDate date;
 
-    public Schedule(Pet pet, ScheduleDTO scheduleDTO) {
+    public Schedule(Pet pet, AddScheduleDTO addScheduleDTO) {
         this.pet = pet;
-        this.type = scheduleDTO.getType();
-        this.content = scheduleDTO.getContent();
-        this.date = scheduleDTO.getDate();
+        this.type = addScheduleDTO.getType();
+        this.content = addScheduleDTO.getContent();
+        this.date = addScheduleDTO.getDate();
     }
 }

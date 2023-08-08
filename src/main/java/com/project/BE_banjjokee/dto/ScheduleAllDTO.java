@@ -25,11 +25,11 @@ public class ScheduleAllDTO {
                         Map<Integer, Days> dayMap = months.getDayMap();
                         if(dayMap.containsKey(day)) {
                             Days days = dayMap.get(day);
-                            days.getScheduleResponses().add(new ScheduleResponse(schedule.getType(), schedule.getContent()));
+                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getType(), schedule.getContent()));
                             dayMap.put(day, days);
                         } else {
                             Days days = new Days();
-                            days.getScheduleResponses().add(new ScheduleResponse(schedule.getType(), schedule.getContent()));
+                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getType(), schedule.getContent()));
                             dayMap.put(day, days);
                         }
                         monthMap.put(month, months);
@@ -37,7 +37,7 @@ public class ScheduleAllDTO {
                         Months months = new Months();
                         Map<Integer, Days> dayMap = months.getDayMap();
                         Days days = new Days();
-                        days.getScheduleResponses().add(new ScheduleResponse(schedule.getType(), schedule.getContent()));
+                        days.getScheduleDTOS().add(new ScheduleDTO(schedule.getType(), schedule.getContent()));
                         dayMap.put(day, days);
                         monthMap.put(month, months);
                     }
@@ -52,15 +52,15 @@ class Months {
 
 @Getter
 class Days {
-    List<ScheduleResponse> scheduleResponses = new ArrayList<>();
+    List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
 }
 
 @Getter
-class ScheduleResponse {
+class ScheduleDTO {
     String type;
     String content;
 
-    public ScheduleResponse(String type, String content) {
+    public ScheduleDTO(String type, String content) {
         this.type = type;
         this.content = content;
     }

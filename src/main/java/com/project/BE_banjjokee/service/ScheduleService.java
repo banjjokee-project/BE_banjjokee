@@ -1,7 +1,7 @@
 package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.ScheduleAllDTO;
-import com.project.BE_banjjokee.dto.ScheduleDTO;
+import com.project.BE_banjjokee.dto.AddScheduleDTO;
 import com.project.BE_banjjokee.model.Pet;
 import com.project.BE_banjjokee.model.Schedule;
 import com.project.BE_banjjokee.model.User;
@@ -25,7 +25,7 @@ public class ScheduleService {
     private final PetRepository petRepository;
 
     @Transactional
-    public String createSchedule(List<ScheduleDTO> scheduleDTOs, String email) {
+    public String createSchedule(List<AddScheduleDTO> addScheduleDTOS, String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 사용자가 존재하지 않습니다."));
         List<Pet> pets  = petRepository.findAllByUserUuid(user.getUuid());
@@ -34,7 +34,7 @@ public class ScheduleService {
                 .filter(p -> p.getIsActivated())
                 .findFirst().get();
 
-        scheduleDTOs.stream().forEach(scheduleDTO -> scheduleRepository.save(new Schedule(pet, scheduleDTO)));
+        addScheduleDTOS.stream().forEach(addScheduleDTO -> scheduleRepository.save(new Schedule(pet, addScheduleDTO)));
         return "스케줄 생성 완료";
     }
 

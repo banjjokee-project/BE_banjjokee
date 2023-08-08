@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class ScheduleDTO {
+public class AddScheduleDTO {
     private String type;
     private String content;
     private LocalDate date;
