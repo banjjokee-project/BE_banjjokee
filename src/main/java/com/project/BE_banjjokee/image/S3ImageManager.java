@@ -1,21 +1,21 @@
 package com.project.BE_banjjokee.image;
 
+import com.project.BE_banjjokee.dto.UploadImageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetUrlRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.S3Uri;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class S3ImageManager implements ImageManager {
     private String bucketName;
 
     @Override
-    public String uploadImage(MultipartFile multipartFile, UUID uuid) throws IOException, S3Exception {
+    public UploadImageDTO uploadImage(MultipartFile multipartFile, UUID uuid) throws IOException, S3Exception {
         String fileName = multipartFile.getOriginalFilename();
         String key = createKey(fileName, uuid);
         byte[] bytes = multipartFile.getBytes();
@@ -37,23 +37,22 @@ public class S3ImageManager implements ImageManager {
                 .build();
 
         s3.putObject(putOb, RequestBody.fromBytes(bytes));
-        return getUrl(key);
+        return new UploadImageDTO(key, getUrl(key));
     }
 
     @Override
-    public List<String> uploadImages(List<MultipartFile> multipartFiles, UUID uuid) throws IOException {
-        List<String> urls = new ArrayList<>();
+    public Map<String, String> uploadImages(List<MultipartFile> multipartFiles, UUID uuid) throws IOException {
+        Map<String, String> keyAndUrl = new HashMap<>();
 
         for (MultipartFile multipartFile : multipartFiles) {
-
             if (multipartFile.isEmpty()) {
                 continue;
             }
-
-            urls.add(uploadImage(multipartFile, uuid));
+            UploadImageDTO imageDto = uploadImage(multipartFile, uuid);
+            keyAndUrl.put(imageDto.getKey(), imageDto.getUrl());
         }
 
-        return urls;
+        return keyAndUrl;
     }
 
     private String getUrl(String key) throws S3Exception {
