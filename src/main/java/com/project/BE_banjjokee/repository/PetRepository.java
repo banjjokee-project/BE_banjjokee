@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface PetRepository extends JpaRepository<Pet, Long> {
     List<Pet> findAllByUserUuid(UUID uuid);
+    Pet findByUserUuidAndIsActivated(UUID uuid, Boolean isActivated);
 }
