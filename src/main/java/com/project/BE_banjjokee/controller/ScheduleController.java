@@ -2,6 +2,7 @@ package com.project.BE_banjjokee.controller;
 
 import com.project.BE_banjjokee.dto.ScheduleAllDTO;
 import com.project.BE_banjjokee.dto.AddScheduleDTO;
+import com.project.BE_banjjokee.dto.UpdateScheduleDTO;
 import com.project.BE_banjjokee.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +27,10 @@ public class ScheduleController {
     @GetMapping
     public ResponseEntity<Map<Integer, ScheduleAllDTO>> getSchedule(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(scheduleService.getSchedule(userDetails.getUsername()));
+    }
+
+    @PatchMapping
+    public ResponseEntity<String> updateSchedule(@RequestBody List<UpdateScheduleDTO> updateScheduleDTOS) {
+        return ResponseEntity.ok(scheduleService.updateSchedule(updateScheduleDTOS));
     }
 }

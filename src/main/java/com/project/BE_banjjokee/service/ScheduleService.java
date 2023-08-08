@@ -2,6 +2,7 @@ package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.ScheduleAllDTO;
 import com.project.BE_banjjokee.dto.AddScheduleDTO;
+import com.project.BE_banjjokee.dto.UpdateScheduleDTO;
 import com.project.BE_banjjokee.model.Pet;
 import com.project.BE_banjjokee.model.Schedule;
 import com.project.BE_banjjokee.model.User;
@@ -68,5 +69,26 @@ public class ScheduleService {
         }
 
         return yearMap;
+    }
+
+    @Transactional
+    public String updateSchedule(List<UpdateScheduleDTO> updateScheduleDTOS) {
+        List<Long> ids = updateScheduleDTOS.stream()
+                .map(updateScheduleDTO -> updateScheduleDTO.getId()).collect(Collectors.toList());
+        List<Schedule> schedules = scheduleRepository.findByIdIn(ids);
+
+        Collections.sort(updateScheduleDTOS, new Comparator<UpdateScheduleDTO>() {
+            @Override
+            public int compare(UpdateScheduleDTO o1, UpdateScheduleDTO o2) {
+                return (int)(o1.getId() - o2.getId());
+            }
+        });
+
+        for (int i = 0; i < updateScheduleDTOS.size(); i++) {
+            UpdateScheduleDTO updateScheduleDTO = updateScheduleDTOS.get(i);
+            schedules.get(i).change(updateScheduleDTO.getType(), updateScheduleDTO.getContent());
+        }
+
+        return "스케줄 수정 완료";
     }
 }

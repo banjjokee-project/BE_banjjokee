@@ -34,4 +34,9 @@ public class Schedule extends BaseEntity{
         this.content = addScheduleDTO.getContent();
         this.date = addScheduleDTO.getDate();
     }
+
+    public void change(String type, String content) {
+        this.type = type;
+        this.content = content;
+    }
 }

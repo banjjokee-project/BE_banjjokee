@@ -25,11 +25,11 @@ public class ScheduleAllDTO {
                         Map<Integer, Days> dayMap = months.getDayMap();
                         if(dayMap.containsKey(day)) {
                             Days days = dayMap.get(day);
-                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getType(), schedule.getContent()));
+                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
                             dayMap.put(day, days);
                         } else {
                             Days days = new Days();
-                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getType(), schedule.getContent()));
+                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
                             dayMap.put(day, days);
                         }
                         monthMap.put(month, months);
@@ -37,7 +37,7 @@ public class ScheduleAllDTO {
                         Months months = new Months();
                         Map<Integer, Days> dayMap = months.getDayMap();
                         Days days = new Days();
-                        days.getScheduleDTOS().add(new ScheduleDTO(schedule.getType(), schedule.getContent()));
+                        days.getScheduleDTOS().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
                         dayMap.put(day, days);
                         monthMap.put(month, months);
                     }
@@ -57,10 +57,12 @@ class Days {
 
 @Getter
 class ScheduleDTO {
+    Long id;
     String type;
     String content;
 
-    public ScheduleDTO(String type, String content) {
+    public ScheduleDTO(Long id, String type, String content) {
+        this.id = id;
         this.type = type;
         this.content = content;
     }
