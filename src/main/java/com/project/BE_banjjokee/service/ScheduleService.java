@@ -1,6 +1,6 @@
 package com.project.BE_banjjokee.service;
 
-import com.project.BE_banjjokee.dto.PetDTO;
+import com.project.BE_banjjokee.dto.ScheduleAllDTO;
 import com.project.BE_banjjokee.dto.ScheduleDTO;
 import com.project.BE_banjjokee.model.Pet;
 import com.project.BE_banjjokee.model.Schedule;
@@ -12,8 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -35,5 +36,37 @@ public class ScheduleService {
 
         scheduleDTOs.stream().forEach(scheduleDTO -> scheduleRepository.save(new Schedule(pet, scheduleDTO)));
         return "스케줄 생성 완료";
+    }
+
+    public Map<Integer, ScheduleAllDTO> getSchedule(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("찾는 사용자가 존재하지 않습니다."));
+        Pet pet = petRepository.findByUserUuidAndIsActivated(user.getUuid(), true);
+        if(pet == null) return null;
+
+        List<Schedule> schedules = scheduleRepository.findAllByPetId(pet.getId());
+
+        int currentYear = LocalDate.now().getYear();
+        int year = currentYear;
+        if (schedules.size() > 0) {
+            Collections.sort(schedules, new Comparator<Schedule>() {
+                @Override
+                public int compare(Schedule o1, Schedule o2) {
+                    return o1.getDate().compareTo(o2.getDate());
+                }
+            });
+            year = schedules.get(0).getDate().getYear();
+        }
+
+        Map<Integer, ScheduleAllDTO> yearMap = new HashMap<>();
+        while(year <= currentYear + 1) {
+            int nowYear = year;
+            List<Schedule> collect = schedules.stream()
+                    .filter(schedule -> schedule.getDate().getYear() == nowYear).collect(Collectors.toList());
+            yearMap.put(nowYear, new ScheduleAllDTO(collect));
+            year += 1;
+        }
+
+        return yearMap;
     }
 }
