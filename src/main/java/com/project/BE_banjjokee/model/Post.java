@@ -42,6 +42,10 @@ public class Post extends BaseEntity {
         writer.getPosts().add(this);
     }
 
+    public void cutWriter() {
+        this.writer = null;
+    }
+
     private void setContent(String content) {
         this.content = content;
     }
@@ -49,7 +53,6 @@ public class Post extends BaseEntity {
     private void setImages(List<PostImage> images) {
         this.images = images;
     }
-
 
     public void change(String content) {
         setContent(content);

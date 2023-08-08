@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,6 +81,7 @@ public class PostService {
         if (!isAuthorizedUser(email, post)) {
             throw new RuntimeException("잘못된 접근입니다.");
         }
+
         List<PostImage> removeImages = post.getImages();
         int size = removeImages.size();
 
@@ -100,6 +102,17 @@ public class PostService {
         }
 
         return post.getId();
+    }
+
+    @Transactional
+    public Long delete(String email, Long id) throws RuntimeException {
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("잘못된 접근"));
+        if (!isAuthorizedUser(email, post)) {
+            throw new RuntimeException("잘못된 접근입니다.");
+        }
+
+        post.getWriter().removePost(post);
+        return id;
     }
 
     private boolean isAuthorizedUser(String email, Post post) {

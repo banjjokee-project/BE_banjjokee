@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,9 +45,17 @@ public class PostController {
     }
 
     @PutMapping("/api/v1/post/{postId}")
-    public CreatePostResponse updatePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long postId, @ModelAttribute CreatePostRequest request) throws IOException {
+    public CreatePostResponse updatePost(@AuthenticationPrincipal UserDetails userDetails,
+                                         @PathVariable Long postId,
+                                         @ModelAttribute CreatePostRequest request) throws IOException {
         Long id = postService.update(userDetails.getUsername(), postId, request.getContent(), request.getImages());
         return new CreatePostResponse(id);
+    }
+
+    @DeleteMapping("/api/v1/post/{postId}")
+    public DeletePostResponse deletePost(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long postId) {
+        Long id = postService.delete(userDetails.getUsername(), postId);
+        return new DeletePostResponse(id);
     }
 
 }

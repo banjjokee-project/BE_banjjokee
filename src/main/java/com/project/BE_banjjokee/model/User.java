@@ -42,7 +42,7 @@ public class User extends BaseEntity{
 
     private String refreshToken; // 리프레시 토큰
 
-    @OneToMany(mappedBy = "writer")
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -65,6 +65,11 @@ public class User extends BaseEntity{
 
     public Post createPost(String content) {
         return new Post(content, this);
+    }
+
+    public void removePost(Post post) {
+        post.cutWriter();
+        this.getPosts().remove(post);
     }
 
 }
