@@ -72,4 +72,8 @@ public class User extends BaseEntity{
         this.getPosts().remove(post);
     }
 
+    public Comment createComment(Post post, Comment parent, String content) {
+        return new Comment(post, parent, this, content);
+    }
+
 }
