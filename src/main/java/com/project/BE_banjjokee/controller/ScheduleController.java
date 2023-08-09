@@ -33,4 +33,14 @@ public class ScheduleController {
     public ResponseEntity<String> updateSchedule(@RequestBody List<UpdateScheduleDTO> updateScheduleDTOS) {
         return ResponseEntity.ok(scheduleService.updateSchedule(updateScheduleDTOS));
     }
+
+    @DeleteMapping("/{scheduleId}")
+    public ResponseEntity deleteSchedule(@PathVariable Long scheduleId) {
+        return ResponseEntity.ok(scheduleService.deleteSchedule(scheduleId));
+    }
+
+    @DeleteMapping
+    public ResponseEntity deleteSchedule(@RequestParam String date) {
+        return ResponseEntity.ok(scheduleService.deleteSchedule(date));
+    }
 }

@@ -91,4 +91,24 @@ public class ScheduleService {
 
         return "스케줄 수정 완료";
     }
+
+    @Transactional
+    public String deleteSchedule(Long scheduleId) {
+        Schedule deleteSchedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new RuntimeException("찾는 스캐줄이 존재하지 않습니다."));
+        scheduleRepository.delete(deleteSchedule);
+
+        return "스케줄 삭제 완료";
+    }
+
+    @Transactional
+    public String deleteSchedule(String date) {
+        LocalDate localDate = LocalDate.parse(date);
+        List<Schedule> deleteSchedules = scheduleRepository.findAllByDate(localDate);
+        deleteSchedules.stream()
+                .forEach(deleteSchedule -> scheduleRepository.delete(deleteSchedule));
+
+        return "스케줄 삭제 완료";
+    }
+
 }
