@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/pet")
@@ -19,7 +21,7 @@ public class PetController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<String> createPet(@RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile,
-                                    @AuthenticationPrincipal UserDetails userDetails) {
+                                    @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         return ResponseEntity.ok(petService.createPet(addPetDTO, imgFile, userDetails.getUsername()));
     }
 
@@ -34,7 +36,7 @@ public class PetController {
     }
 
     @PatchMapping(path = "/{petId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> updatePet(@PathVariable Long petId, @RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile) {
+    public ResponseEntity<String> updatePet(@PathVariable Long petId, @RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile) throws IOException {
         return ResponseEntity.ok(petService.updatePet(petId, addPetDTO, imgFile));
     }
 
