@@ -92,6 +92,11 @@ public class PetService {
     public String deletePet(Long petId) {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 반려동물이 존재하지 않습니다."));
+
+        PetImage deleteImg = imageRepository.findByPetId(petId)
+                .orElseThrow(() -> new RuntimeException("찾는 이미지가 존재하지 않습니다."));
+        imageManager.delete(deleteImg.getKey());
+        imageRepository.deleteImage(deleteImg);
         petRepository.delete(pet);
         return "반려동물 삭제 완료";
     }
