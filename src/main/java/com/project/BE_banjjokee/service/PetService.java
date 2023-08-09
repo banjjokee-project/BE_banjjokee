@@ -71,13 +71,20 @@ public class PetService {
     }
 
     @Transactional
-    public String updatePet(Long petId, AddPetDTO addPetDTO, MultipartFile imgFile) {
+    public String updatePet(Long petId, AddPetDTO addPetDTO, MultipartFile imgFile) throws IOException {
         Pet pet = petRepository.findById(petId)
                 .orElseThrow(() -> new IllegalArgumentException("찾는 반려동물이 존재하지 않습니다."));
 
-        //s3Service로 기존 이미지 삭제 -> imgFile s3 저장 -> 반환받은 url addPetDTO에 설정
+        PetImage deleteImg = imageRepository.findByPetId(petId)
+                .orElseThrow(() -> new RuntimeException("찾는 이미지가 존재하지 않습니다."));
+        imageManager.delete(deleteImg.getKey());
+        imageRepository.deleteImage(deleteImg);
 
+        UploadImageDTO uploadImageDTO = imageManager.uploadImage(imgFile, pet.getUser().getUuid());
+        addPetDTO.setImgUrl(uploadImageDTO.getUrl());
         pet.change(addPetDTO);
+        imageRepository.save(PetImage.createPetImage(uploadImageDTO.getKey(), pet));
+
         return "반려동물 갱신 완료";
     }
 
