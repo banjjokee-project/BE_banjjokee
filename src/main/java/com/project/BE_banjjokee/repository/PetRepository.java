@@ -13,4 +13,5 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
     @EntityGraph(attributePaths = {"user"})
     Optional<Pet> findById(Long id);
     List<Pet> findAllByUserUuid(UUID uuid);
+    Pet findByUserUuidAndIsActivated(UUID uuid, Boolean isActivated);
 }
