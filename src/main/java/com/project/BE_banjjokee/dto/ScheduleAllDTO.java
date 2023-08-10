@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,37 +21,27 @@ public class ScheduleAllDTO {
                     int day = date.getDayOfMonth();
                     if(monthMap.containsKey(month)) {
                         Months months = monthMap.get(month);
-                        Map<Integer, Days> dayMap = months.getDayMap();
+                        Map<Integer, Object> dayMap = months.getDayMap();
                         if(dayMap.containsKey(day)) {
-                            Days days = dayMap.get(day);
-                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
+                            Days days = (Days) dayMap.get(day);
+                            days.getGenericDTO().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
                             dayMap.put(day, days);
                         } else {
                             Days days = new Days();
-                            days.getScheduleDTOS().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
+                            days.getGenericDTO().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
                             dayMap.put(day, days);
                         }
                         monthMap.put(month, months);
                     } else {
                         Months months = new Months();
-                        Map<Integer, Days> dayMap = months.getDayMap();
+                        Map<Integer, Object> dayMap = months.getDayMap();
                         Days days = new Days();
-                        days.getScheduleDTOS().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
+                        days.getGenericDTO().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
                         dayMap.put(day, days);
                         monthMap.put(month, months);
                     }
                 });
     }
-}
-
-@Getter
-class Months {
-    Map<Integer, Days> dayMap = new HashMap();
-}
-
-@Getter
-class Days {
-    List<ScheduleDTO> scheduleDTOS = new ArrayList<>();
 }
 
 @Getter
