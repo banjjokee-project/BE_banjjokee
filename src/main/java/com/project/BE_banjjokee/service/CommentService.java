@@ -2,6 +2,7 @@ package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.CreateCommentRequest;
 import com.project.BE_banjjokee.dto.PostCommentDTO;
+import com.project.BE_banjjokee.dto.UpdateCommentRequest;
 import com.project.BE_banjjokee.dto.UserCommentDTO;
 import com.project.BE_banjjokee.model.Comment;
 import com.project.BE_banjjokee.model.Post;
@@ -53,6 +54,22 @@ public class CommentService {
         return comments.stream()
                 .map(UserCommentDTO::new)
                 .toList();
+    }
+
+    @Transactional
+    public Long updateComment(String email, UpdateCommentRequest request) throws RuntimeException {
+        Comment comment = commentRepository.findById(request.getCommentId()).orElseThrow(() -> new RuntimeException("잘못된 접근"));
+
+        if (!isValidUser(comment, email)) {
+            throw new RuntimeException("잘못된 접근");
+        }
+
+        comment.change(request.getContent());
+        return comment.getId();
+    }
+
+    private boolean isValidUser(Comment comment, String email) {
+        return comment.getWriter().getEmail().equals(email);
     }
 
 }

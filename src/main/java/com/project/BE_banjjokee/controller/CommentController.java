@@ -33,4 +33,11 @@ public class CommentController {
         return new UserCommentResponse(commentService.findUserComments(userDetails.getUsername()));
     }
 
+    @PutMapping("/api/v1/comment")
+    public UpdateCommentResponse updateComment(@AuthenticationPrincipal UserDetails userDetails,
+                                               @RequestBody UpdateCommentRequest request) {
+        Long id = commentService.updateComment(userDetails.getUsername(), request);
+        return new UpdateCommentResponse(id);
+    }
+
 }
