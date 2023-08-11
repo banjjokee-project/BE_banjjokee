@@ -65,7 +65,7 @@ public class CommentService {
         }
 
         comment.change(request.getContent());
-        return comment.getId();
+        return comment.getParent().getId();
     }
 
     @Transactional
@@ -84,6 +84,5 @@ public class CommentService {
     private boolean isValidUser(Comment comment, String email) {
         return comment.getWriter().getEmail().equals(email);
     }
-
 
 }
