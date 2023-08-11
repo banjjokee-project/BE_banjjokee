@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class UpdateCommentResponse {
+public class CommentResponse {
 
-    private Long commentId;
+    private Long postId;
 
 }

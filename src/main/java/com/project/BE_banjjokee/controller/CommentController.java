@@ -16,10 +16,10 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/api/v1/comment")
-    public CreateCommentResponse createComment(@AuthenticationPrincipal UserDetails userDetails,
-                                               @RequestBody CreateCommentRequest request) {
+    public CommentResponse createComment(@AuthenticationPrincipal UserDetails userDetails,
+                                         @RequestBody CreateCommentRequest request) {
         Long id = commentService.createComment(userDetails.getUsername(), request);
-        return new CreateCommentResponse(id);
+        return new CommentResponse(id);
     }
 
     @GetMapping("api/v1/post-comments/{postId}")
@@ -34,17 +34,17 @@ public class CommentController {
     }
 
     @PutMapping("/api/v1/comment")
-    public UpdateCommentResponse updateComment(@AuthenticationPrincipal UserDetails userDetails,
-                                               @RequestBody UpdateCommentRequest request) {
+    public CommentResponse updateComment(@AuthenticationPrincipal UserDetails userDetails,
+                                         @RequestBody UpdateCommentRequest request) {
         Long id = commentService.updateComment(userDetails.getUsername(), request);
-        return new UpdateCommentResponse(id);
+        return new CommentResponse(id);
     }
 
     @DeleteMapping("/api/v1/comment/{commentId}")
-    public DeleteCommentResponse deleteComment(@AuthenticationPrincipal UserDetails userDetails,
+    public CommentResponse deleteComment(@AuthenticationPrincipal UserDetails userDetails,
                                                @PathVariable Long commentId) {
         Long postId = commentService.deleteComment(userDetails.getUsername(), commentId);
-        return new DeleteCommentResponse(postId);
+        return new CommentResponse(postId);
     }
 
 }
