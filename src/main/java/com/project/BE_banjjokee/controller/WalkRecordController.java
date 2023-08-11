@@ -1,6 +1,7 @@
 package com.project.BE_banjjokee.controller;
 
 import com.project.BE_banjjokee.dto.AddWalkRecordDTO;
+import com.project.BE_banjjokee.dto.UpdateAchieveDTO;
 import com.project.BE_banjjokee.dto.UpdateWalkRecordDTO;
 import com.project.BE_banjjokee.dto.WalkRecordAllDTO;
 import com.project.BE_banjjokee.service.WalkRecordService;
@@ -31,5 +32,10 @@ public class WalkRecordController {
     @PatchMapping
     public ResponseEntity<String> updateWalkRecord(@RequestBody UpdateWalkRecordDTO updateWalkRecordDTO) {
         return ResponseEntity.ok(walkRecordService.updateWalkRecord(updateWalkRecordDTO));
+    }
+
+    @PatchMapping("/achievement")
+    public ResponseEntity<String> updateAchieve(@RequestBody UpdateAchieveDTO updateAchieveDTO) {
+        return ResponseEntity.ok(walkRecordService.updateAchieve(updateAchieveDTO));
     }
 }

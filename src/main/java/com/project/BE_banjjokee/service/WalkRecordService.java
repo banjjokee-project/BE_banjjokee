@@ -1,6 +1,7 @@
 package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.AddWalkRecordDTO;
+import com.project.BE_banjjokee.dto.UpdateAchieveDTO;
 import com.project.BE_banjjokee.dto.UpdateWalkRecordDTO;
 import com.project.BE_banjjokee.dto.WalkRecordAllDTO;
 import com.project.BE_banjjokee.model.Pet;
@@ -74,6 +75,15 @@ public class WalkRecordService {
         walkRecord.setContent(updateWalkRecordDTO.getContent());
 
         return "산책 기록 수정 완료";
+    }
+
+    @Transactional
+    public String updateAchieve(UpdateAchieveDTO updateAchieveDTO) {
+        WalkRecord walkRecord = walkRecordRepository.findById(updateAchieveDTO.getId())
+                .orElseThrow(() -> new RuntimeException("찾는 산책 기록이 존재하지 않습니다."));
+        walkRecord.setAchievement(updateAchieveDTO.getAchievement());
+
+        return "성취도 수정 완료";
     }
 }
 

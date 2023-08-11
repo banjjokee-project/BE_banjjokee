@@ -34,4 +34,8 @@ public class WalkRecord extends BaseEntity{
     public void setContent(String content) {
         this.content = content;
     }
+
+    public void setAchievement(Integer achievement) {
+        this.achievement = achievement;
+    }
 }
