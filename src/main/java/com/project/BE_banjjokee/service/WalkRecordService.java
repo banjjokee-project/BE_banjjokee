@@ -85,5 +85,14 @@ public class WalkRecordService {
 
         return "성취도 수정 완료";
     }
+
+    @Transactional
+    public String deleteWalkRecord(Long walkRecordId) {
+        WalkRecord walkRecord = walkRecordRepository.findById(walkRecordId)
+                .orElseThrow(() -> new RuntimeException("찾는 산책 기록이 존재하지 않습니다."));
+        walkRecordRepository.delete(walkRecord);
+
+        return "산책기록 삭제 완료";
+    }
 }
 

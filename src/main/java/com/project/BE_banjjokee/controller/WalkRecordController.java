@@ -38,4 +38,9 @@ public class WalkRecordController {
     public ResponseEntity<String> updateAchieve(@RequestBody UpdateAchieveDTO updateAchieveDTO) {
         return ResponseEntity.ok(walkRecordService.updateAchieve(updateAchieveDTO));
     }
+
+    @DeleteMapping("/{walkRecordId}")
+    public ResponseEntity<String> deleteWalkRecord(@PathVariable Long walkRecordId) {
+        return ResponseEntity.ok(walkRecordService.deleteWalkRecord(walkRecordId));
+    }
 }
