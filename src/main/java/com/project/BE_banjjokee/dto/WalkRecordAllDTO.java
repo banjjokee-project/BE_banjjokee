@@ -1,6 +1,6 @@
 package com.project.BE_banjjokee.dto;
 
-import com.project.BE_banjjokee.model.Schedule;
+import com.project.BE_banjjokee.model.WalkRecord;
 import lombok.Data;
 import lombok.Getter;
 
@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class ScheduleAllDTO {
+public class WalkRecordAllDTO {
     Map<Integer, Months> monthMap = new HashMap();
 
-    public ScheduleAllDTO(List<Schedule> schedules) {
-        schedules.stream()
-                .forEach(schedule -> {
-                    LocalDate date = schedule.getDate();
+    public WalkRecordAllDTO(List<WalkRecord> walkRecords) {
+        walkRecords.stream()
+                .forEach(walkRecord -> {
+                    LocalDate date = walkRecord.getDate();
                     int month = date.getMonthValue();
                     int day = date.getDayOfMonth();
                     if(monthMap.containsKey(month)) {
@@ -24,11 +24,11 @@ public class ScheduleAllDTO {
                         Map<Integer, Object> dayMap = months.getDayMap();
                         if(dayMap.containsKey(day)) {
                             Days days = (Days) dayMap.get(day);
-                            days.getGenericDTO().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
+                            days.getGenericDTO().add(new WalkRecordDTO(walkRecord.getId(), walkRecord.getContent(), walkRecord.getAchievement()));
                             dayMap.put(day, days);
                         } else {
                             Days days = new Days();
-                            days.getGenericDTO().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
+                            days.getGenericDTO().add(new WalkRecordDTO(walkRecord.getId(), walkRecord.getContent(), walkRecord.getAchievement()));
                             dayMap.put(day, days);
                         }
                         monthMap.put(month, months);
@@ -36,7 +36,7 @@ public class ScheduleAllDTO {
                         Months months = new Months();
                         Map<Integer, Object> dayMap = months.getDayMap();
                         Days days = new Days();
-                        days.getGenericDTO().add(new ScheduleDTO(schedule.getId(), schedule.getType(), schedule.getContent()));
+                        days.getGenericDTO().add(new WalkRecordDTO(walkRecord.getId(), walkRecord.getContent(), walkRecord.getAchievement()));
                         dayMap.put(day, days);
                         monthMap.put(month, months);
                     }
@@ -45,14 +45,14 @@ public class ScheduleAllDTO {
 }
 
 @Getter
-class ScheduleDTO {
+class WalkRecordDTO {
     Long id;
-    String type;
     String content;
+    Integer achievement;
 
-    public ScheduleDTO(Long id, String type, String content) {
+    public WalkRecordDTO(Long id, String content, Integer achievement) {
         this.id = id;
-        this.type = type;
         this.content = content;
+        this.achievement = achievement;
     }
 }
