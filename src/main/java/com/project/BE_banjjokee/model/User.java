@@ -76,4 +76,9 @@ public class User extends BaseEntity{
         return new Comment(post, parent, this, content);
     }
 
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+        comment.cutWriter();
+    }
+
 }

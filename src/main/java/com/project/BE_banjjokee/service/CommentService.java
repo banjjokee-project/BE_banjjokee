@@ -68,8 +68,22 @@ public class CommentService {
         return comment.getId();
     }
 
+    @Transactional
+    public Long deleteComment(String email, Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("잘못된 접근"));
+        Long postId = comment.getParent().getId();
+
+        if (isValidUser(comment, email)) {
+            throw new RuntimeException("잘못된 접근");
+        }
+
+        comment.getWriter().removeComment(comment); // user 객체를 이용하여 comment 삭제
+        return postId;
+    }
+
     private boolean isValidUser(Comment comment, String email) {
         return comment.getWriter().getEmail().equals(email);
     }
+
 
 }
