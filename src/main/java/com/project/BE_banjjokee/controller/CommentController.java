@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
 
-    private CommentService commentService;
+    private final CommentService commentService;
 
     @PostMapping("/api/v1/comment")
     public CommentResponse createComment(@AuthenticationPrincipal UserDetails userDetails,
@@ -42,7 +42,7 @@ public class CommentController {
 
     @DeleteMapping("/api/v1/comment/{commentId}")
     public CommentResponse deleteComment(@AuthenticationPrincipal UserDetails userDetails,
-                                               @PathVariable Long commentId) {
+                                         @PathVariable Long commentId) {
         Long postId = commentService.deleteComment(userDetails.getUsername(), commentId);
         return new CommentResponse(postId);
     }
