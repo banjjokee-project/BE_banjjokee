@@ -1,6 +1,7 @@
 package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.AddWalkRecordDTO;
+import com.project.BE_banjjokee.dto.UpdateWalkRecordDTO;
 import com.project.BE_banjjokee.dto.WalkRecordAllDTO;
 import com.project.BE_banjjokee.model.Pet;
 import com.project.BE_banjjokee.model.User;
@@ -27,7 +28,7 @@ public class WalkRecordService {
     @Transactional
     public String createWalkRecord(AddWalkRecordDTO addWalkRecordDTO, String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("찾으시는 사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new RuntimeException("찾는 사용자가 존재하지 않습니다."));
         Pet pet = petRepository.findByUserUuidAndIsActivated(user.getUuid(), true);
         walkRecordRepository.save(new WalkRecord(pet, addWalkRecordDTO.getContent(), addWalkRecordDTO.getDate()));
 
@@ -64,6 +65,15 @@ public class WalkRecordService {
         }
 
         return yearMap;
+    }
+
+    @Transactional
+    public String updateWalkRecord(UpdateWalkRecordDTO updateWalkRecordDTO) {
+        WalkRecord walkRecord = walkRecordRepository.findById(updateWalkRecordDTO.getId())
+                .orElseThrow(() -> new RuntimeException("찾는 산책 기록이 존재하지 않습니다."));
+        walkRecord.setContent(updateWalkRecordDTO.getContent());
+
+        return "산책 기록 수정 완료";
     }
 }
 

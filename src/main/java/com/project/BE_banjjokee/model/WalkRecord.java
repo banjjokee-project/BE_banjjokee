@@ -30,4 +30,8 @@ public class WalkRecord extends BaseEntity{
         this.content = content;
         this.date = date;
     }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

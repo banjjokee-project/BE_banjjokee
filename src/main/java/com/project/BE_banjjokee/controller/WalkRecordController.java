@@ -1,6 +1,7 @@
 package com.project.BE_banjjokee.controller;
 
 import com.project.BE_banjjokee.dto.AddWalkRecordDTO;
+import com.project.BE_banjjokee.dto.UpdateWalkRecordDTO;
 import com.project.BE_banjjokee.dto.WalkRecordAllDTO;
 import com.project.BE_banjjokee.service.WalkRecordService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,10 @@ public class WalkRecordController {
     @GetMapping
     public ResponseEntity<Map<Integer, WalkRecordAllDTO>> getWalkRecord(@AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(walkRecordService.getWalkRecord(userDetails.getUsername()));
+    }
+
+    @PatchMapping
+    public ResponseEntity<String> updateWalkRecord(@RequestBody UpdateWalkRecordDTO updateWalkRecordDTO) {
+        return ResponseEntity.ok(walkRecordService.updateWalkRecord(updateWalkRecordDTO));
     }
 }
