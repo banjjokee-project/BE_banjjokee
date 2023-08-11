@@ -1,6 +1,8 @@
 package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.CreateCommentRequest;
+import com.project.BE_banjjokee.dto.PostCommentDTO;
+import com.project.BE_banjjokee.dto.UserCommentDTO;
 import com.project.BE_banjjokee.model.Comment;
 import com.project.BE_banjjokee.model.Post;
 import com.project.BE_banjjokee.model.User;
@@ -10,6 +12,8 @@ import com.project.BE_banjjokee.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,4 +40,19 @@ public class CommentService {
 
         return comment.getId();
     }
+
+    public List<PostCommentDTO> findPostComments(Long postId) {
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        return comments.stream()
+                .map(PostCommentDTO::new)
+                .toList();
+    }
+
+    public List<UserCommentDTO> findUserComments(String email) {
+        List<Comment> comments = commentRepository.findAllByEmail(email);
+        return comments.stream()
+                .map(UserCommentDTO::new)
+                .toList();
+    }
+
 }
