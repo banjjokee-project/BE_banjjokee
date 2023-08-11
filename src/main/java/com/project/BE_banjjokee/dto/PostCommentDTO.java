@@ -18,7 +18,13 @@ public class PostCommentDTO {
 
     public PostCommentDTO(Comment comment) {
         this.commentId = comment.getId();
-        this.parentId = comment.getParent().getId();
+
+        if (comment.getParent() != null) {
+            this.parentId = comment.getParent().getId();
+        } else {
+            this.parentId = comment.getId();
+        }
+
         this.writer = comment.getWriter().getNickname();
         this.content = comment.getContent();
     }

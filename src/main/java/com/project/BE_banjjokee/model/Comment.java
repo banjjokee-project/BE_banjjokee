@@ -2,12 +2,14 @@ package com.project.BE_banjjokee.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class Comment extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +33,16 @@ public class Comment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public Comment(Post post, Comment parent, User writer, String content) {
+        if (parent != null) {
+            setParent(parent);
+        }
+
+        setPost(post);
+        setWriter(writer);
+        setContent(content);
+    }
 
     private void setContent(String content) {
 
