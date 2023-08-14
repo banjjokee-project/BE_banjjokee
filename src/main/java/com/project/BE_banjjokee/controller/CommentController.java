@@ -1,5 +1,6 @@
 package com.project.BE_banjjokee.controller;
 
+import com.project.BE_banjjokee.alarm.Alarms;
 import com.project.BE_banjjokee.dto.*;
 import com.project.BE_banjjokee.service.CommentService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,11 +18,15 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    private final Alarms alarms;
+
     @PostMapping("/api/v1/comment")
     public CommentResponse createComment(@AuthenticationPrincipal UserDetails userDetails,
                                          @RequestBody CreateCommentRequest request) {
-        Long id = commentService.createComment(userDetails.getUsername(), request);
-        return new CommentResponse(id);
+        CreateCommentDTO comment = commentService.createComment(userDetails.getUsername(), request);
+        alarms.push(comment.getUuids(), comment.getPostId());
+
+        return new CommentResponse(comment.getPostId());
     }
 
     @GetMapping("api/v1/post-comments/{postId}")
