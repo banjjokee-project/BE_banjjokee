@@ -1,9 +1,6 @@
 package com.project.BE_banjjokee.service;
 
-import com.project.BE_banjjokee.dto.CreateCommentRequest;
-import com.project.BE_banjjokee.dto.PostCommentDTO;
-import com.project.BE_banjjokee.dto.UpdateCommentRequest;
-import com.project.BE_banjjokee.dto.UserCommentDTO;
+import com.project.BE_banjjokee.dto.*;
 import com.project.BE_banjjokee.model.Comment;
 import com.project.BE_banjjokee.model.Post;
 import com.project.BE_banjjokee.model.User;
@@ -14,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +27,22 @@ public class CommentService {
 
     private final PostRepository postRepository;
 
-    public Long createComment(String email, CreateCommentRequest request) {
+    public CreateCommentDTO createComment(String email, CreateCommentRequest request) {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("잘못된 접근입니다."));
         Post post = postRepository.findById(request.getPostId()).orElseThrow(() -> new RuntimeException("잘못된 접근입니다."));
         Comment parentComment = null;
+        Set<UUID> uuids = new HashSet<>();
 
         if (request.getParentId() != null) {
             parentComment = commentRepository.findById(request.getParentId()).orElseThrow(() -> new RuntimeException("잘못된 접근입니다."));
+            uuids.add(parentComment.getWriter().getUuid());
         }
 
         Comment comment = user.createComment(post, parentComment, request.getContent());
         commentRepository.save(comment);
+        uuids.add(post.getWriter().getUuid());
 
-        return comment.getId();
+        return new CreateCommentDTO(post.getId(), uuids);
     }
 
     public List<PostCommentDTO> findPostComments(Long postId) {
