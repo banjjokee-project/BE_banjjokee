@@ -7,15 +7,18 @@ import com.project.BE_banjjokee.image.ImageManager;
 import com.project.BE_banjjokee.model.Pet;
 import com.project.BE_banjjokee.model.PetImage;
 import com.project.BE_banjjokee.model.User;
+import com.project.BE_banjjokee.model.WalkRecord;
 import com.project.BE_banjjokee.repository.ImageRepository;
 import com.project.BE_banjjokee.repository.PetRepository;
 import com.project.BE_banjjokee.repository.UserRepository;
+import com.project.BE_banjjokee.repository.WalkRecordRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +30,7 @@ public class PetService {
     private final UserRepository userRepository;
     private final ImageManager imageManager;
     private final ImageRepository imageRepository;
+    private final WalkRecordRepository walkRecordRepository;
 
     @Transactional
     public String createPet(AddPetDTO addPetDTO, MultipartFile imgFile, String email) throws IOException {
@@ -54,10 +58,22 @@ public class PetService {
         Optional<Pet> optionalPet = pets.stream()
                 .filter(p -> p.getIsActivated())
                 .findFirst();
+
         if (optionalPet.isPresent()) {
             Pet pet = optionalPet.get();
-            //Walk에서 목표 달성량 계산해서 PetDTO의 인자로 넘겨줘야함.
-            return new PetDTO(pet.getId(), pet.getName(), pet.getImgUrl(),0);
+
+            int currentMonth = LocalDate.now().getMonthValue();
+            List<WalkRecord> walkRecords = walkRecordRepository.findAllByPetIdAndDateAndAchievementNotNull(pet.getId(), currentMonth);
+
+            Integer avgAchievement = 0;
+            for (WalkRecord walkRecord : walkRecords) {
+                avgAchievement += walkRecord.getAchievement();
+            }
+
+            if(walkRecords.size() != 0)
+                avgAchievement /= walkRecords.size();
+
+            return new PetDTO(pet.getId(), pet.getName(), pet.getImgUrl(), avgAchievement);
         }
         else {
             return null;
