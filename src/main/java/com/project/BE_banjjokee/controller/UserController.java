@@ -3,6 +3,7 @@ package com.project.BE_banjjokee.controller;
 import com.project.BE_banjjokee.dto.SignUpDto;
 import com.project.BE_banjjokee.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,6 +11,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class UserController {
     private final UserService userService;
+
+    @GetMapping("/user/checkEmailExist/{email}")
+    ResponseEntity<Boolean> checkEmailExist(@PathVariable String email) {
+        return ResponseEntity.ok(userService.checkEmailExist(email));
+    }
+
+    @GetMapping("/user/checkNicknameExist/{nickname}")
+    ResponseEntity<Boolean> checkNicknameExist(@PathVariable String nickname) {
+        return ResponseEntity.ok(userService.checkNicknameExist(nickname));
+    }
 
     @PostMapping("/signup")
     String signup(@RequestBody SignUpDto signUpDto) {

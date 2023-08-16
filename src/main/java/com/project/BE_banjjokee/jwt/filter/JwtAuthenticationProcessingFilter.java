@@ -47,8 +47,9 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println(request.getRequestURI());
-        if (NO_CHECK_URL_SET.contains(request.getRequestURI())) {
+        String path = request.getRequestURI();
+        System.out.println(path);
+        if (NO_CHECK_URL_SET.contains(path) || path.startsWith("/api/user/checkEmailExist/") || path.startsWith("/api/user/checkNicknameExist/")) {
             filterChain.doFilter(request, response);
             return; // return으로 이후 현재 필터 진행 막기
         }
