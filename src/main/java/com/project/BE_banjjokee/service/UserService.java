@@ -22,6 +22,11 @@ public class UserService {
         else return true;
     }
 
+    public Boolean checkNicknameExist(String nickname) {
+        if(userRepository.findByNickname(nickname).isPresent()) return false;
+        else return true;
+    }
+
     public User createUser(SignUpDto signUpDto) {
         User user = User.builder()
                 .uuid(UUID.randomUUID())

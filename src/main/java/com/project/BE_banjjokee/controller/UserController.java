@@ -17,6 +17,11 @@ public class UserController {
         return ResponseEntity.ok(userService.checkEmailExist(email));
     }
 
+    @GetMapping("/user/checkNicknameExist/{nickname}")
+    ResponseEntity<Boolean> checkNicknameExist(@PathVariable String nickname) {
+        return ResponseEntity.ok(userService.checkNicknameExist(nickname));
+    }
+
     @PostMapping("/signup")
     String signup(@RequestBody SignUpDto signUpDto) {
         userService.createUser(signUpDto);
