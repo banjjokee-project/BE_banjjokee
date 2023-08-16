@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -16,6 +16,11 @@ import java.util.UUID;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    public Boolean checkEmailExist(String email) {
+        if(userRepository.findByEmail(email).isPresent()) return false;
+        else return true;
+    }
 
     public User createUser(SignUpDto signUpDto) {
         User user = User.builder()
@@ -29,5 +34,4 @@ public class UserService {
         user.passwordEncode(passwordEncoder);
         return userRepository.save(user);
     }
-
 }

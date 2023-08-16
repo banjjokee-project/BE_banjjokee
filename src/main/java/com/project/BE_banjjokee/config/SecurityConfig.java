@@ -48,7 +48,8 @@ public class SecurityConfig {
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 )
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/api/signup", "/login/oauth2/code/**").permitAll()
+                        .requestMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/api/signup", "/login/oauth2/code/**",
+                                "/api/user/checkEmailExist/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // 세션을 사용하지 않기 때문에 STATELESS로 설정
