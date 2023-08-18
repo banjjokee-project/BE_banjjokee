@@ -35,6 +35,11 @@ public class CommentService {
 
         if (request.getParentId() != null) {
             parentComment = commentRepository.findById(request.getParentId()).orElseThrow(() -> new RuntimeException("잘못된 접근입니다."));
+
+            if (!post.getComments().contains(parentComment)) {
+                throw new RuntimeException("잘못된 접근");
+            }
+
             uuids.add(parentComment.getWriter().getUuid());
         }
 
