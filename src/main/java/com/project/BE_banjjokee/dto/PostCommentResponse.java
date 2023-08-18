@@ -12,6 +12,6 @@ public class PostCommentResponse {
 
     private Long postId;
 
-    private List<PostCommentDTO> comments;
+    private List<CommentDTO> comments;
 
 }
