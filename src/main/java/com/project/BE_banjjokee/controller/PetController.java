@@ -3,6 +3,7 @@ package com.project.BE_banjjokee.controller;
 import com.project.BE_banjjokee.dto.AddPetDTO;
 import com.project.BE_banjjokee.dto.PetDTO;
 import com.project.BE_banjjokee.service.PetService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,8 @@ public class PetController {
     private final PetService petService;
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> createPet(@RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile,
-                                    @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+    public ResponseEntity<String> createPet(@Valid @RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile,
+                                            @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         return ResponseEntity.ok(petService.createPet(addPetDTO, imgFile, userDetails.getUsername()));
     }
 
@@ -36,7 +37,7 @@ public class PetController {
     }
 
     @PatchMapping(path = "/{petId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<String> updatePet(@PathVariable Long petId, @RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile) throws IOException {
+    public ResponseEntity<String> updatePet(@PathVariable Long petId, @Valid @RequestPart AddPetDTO addPetDTO, @RequestPart MultipartFile imgFile) throws IOException {
         return ResponseEntity.ok(petService.updatePet(petId, addPetDTO, imgFile));
     }
 
