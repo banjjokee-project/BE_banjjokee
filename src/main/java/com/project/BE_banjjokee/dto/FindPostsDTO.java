@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class findPostsDTO {
+public class FindPostsDTO {
 
     private Long postId;
 

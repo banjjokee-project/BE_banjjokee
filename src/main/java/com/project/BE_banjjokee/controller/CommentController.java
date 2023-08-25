@@ -31,7 +31,7 @@ public class CommentController {
 
     @GetMapping("api/v1/post-comments/{postId}")
     public PostCommentResponse findPostComments(@PathVariable Long postId) {
-        List<PostCommentDTO> comments = commentService.findPostComments(postId);
+        List<CommentDTO> comments = commentService.findPostComments(postId);
         return new PostCommentResponse(postId, comments);
     }
 

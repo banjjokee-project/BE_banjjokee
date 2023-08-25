@@ -5,13 +5,13 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class findPostsResponse {
+public class FindPostsResponse {
 
-    private List<findPostsDTO> posts;
+    private List<FindPostsDTO> posts;
 
     private boolean hasNextPage;
 
-    public findPostsResponse(List<findPostsDTO> posts, int limit) {
+    public FindPostsResponse(List<FindPostsDTO> posts, int limit) {
         this.posts = posts;
 
         if (limit < posts.size()) {

@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,11 +47,38 @@ public class CommentService {
         return new CreateCommentDTO(post.getId(), uuids);
     }
 
-    public List<PostCommentDTO> findPostComments(Long postId) {
+    public List<CommentDTO> findPostComments(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
-        return comments.stream()
-                .map(PostCommentDTO::new)
-                .toList();
+        Map<Comment, List<CommentDTO>> commentHierarchy = new HashMap<>();
+
+        for (Comment comment : comments) {
+            Comment parent = comment.getParent();
+            List<CommentDTO> commentDTOS = commentHierarchy.get(parent);
+            CommentDTO commentDTO = new CommentDTO(comment);
+
+            if (commentDTOS == null) {
+                commentDTOS = new ArrayList<>();
+                commentHierarchy.put(parent, commentDTOS);
+            }
+
+            if (parent.getId() != comment.getId()) {
+                commentDTOS.add(commentDTO);
+            }
+        }
+
+        List<CommentDTO> dtos = new ArrayList<>();
+
+        for (Comment parent : commentHierarchy.keySet()) {
+            List<CommentDTO> children = commentHierarchy.get(parent);
+            CommentDTO parentDTO = new CommentDTO(parent);
+
+            parentDTO.changeChildren(children);
+            dtos.add(parentDTO);
+        }
+
+        dtos.sort(Comparator.comparing(CommentDTO::getCommentId));
+
+        return dtos;
     }
 
     public List<UserCommentDTO> findUserComments(String email) {
@@ -73,7 +97,7 @@ public class CommentService {
         }
 
         comment.change(request.getContent());
-        return comment.getParent().getId();
+        return comment.getPost().getId();
     }
 
     @Transactional

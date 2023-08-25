@@ -2,8 +2,8 @@ package com.project.BE_banjjokee.service;
 
 import com.project.BE_banjjokee.dto.CreatePostRequest;
 import com.project.BE_banjjokee.dto.UserPostDTO;
-import com.project.BE_banjjokee.dto.findPostDTO;
-import com.project.BE_banjjokee.dto.findPostsDTO;
+import com.project.BE_banjjokee.dto.FindPostDTO;
+import com.project.BE_banjjokee.dto.FindPostsDTO;
 import com.project.BE_banjjokee.image.ImageManager;
 import com.project.BE_banjjokee.model.Post;
 import com.project.BE_banjjokee.model.PostImage;
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
@@ -50,24 +49,24 @@ public class PostService {
         return post.getId();
     }
 
-    public List<findPostsDTO> findPosts(int offset, int limit) {
+    public List<FindPostsDTO> findPosts(int offset, int limit) {
         List<Post> posts = postRepository.findPostsWithOffsetAndLimit(offset, limit + 3);
-        List<findPostsDTO> dtos = new ArrayList<>();
+        List<FindPostsDTO> dtos = new ArrayList<>();
 
         for (Post post : posts) {
             String url = null;
             if (!post.getImages().isEmpty()) {
                 url = post.getImages().get(0).getUrl();
             }
-            dtos.add(new findPostsDTO(post.getId(), url));
+            dtos.add(new FindPostsDTO(post.getId(), url));
         }
 
         return dtos;
     }
 
-    public findPostDTO findPost(long postId) {
+    public FindPostDTO findPost(long postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("게시글 존재하지 않습니다."));
-        return new findPostDTO(post);
+        return new FindPostDTO(post);
     }
 
     public List<UserPostDTO> findUserPosts(String email) {
