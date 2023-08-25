@@ -4,6 +4,7 @@ import com.project.BE_banjjokee.dto.CreatePostRequest;
 import com.project.BE_banjjokee.dto.UserPostDTO;
 import com.project.BE_banjjokee.dto.FindPostDTO;
 import com.project.BE_banjjokee.dto.FindPostsDTO;
+import com.project.BE_banjjokee.exception.*;
 import com.project.BE_banjjokee.image.ImageManager;
 import com.project.BE_banjjokee.model.Post;
 import com.project.BE_banjjokee.model.PostImage;
@@ -36,7 +37,7 @@ public class PostService {
 
     @Transactional
     public Long createPost(String email, CreatePostRequest request) throws IOException {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("존재하지 않는 사용자"));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(ErrorCode.U001));
 
         Map<String, String> imageInfos = imageManager.uploadImages(request.getImages(), user.getUuid());
         Post post = user.createPost(request.getContent());
@@ -65,7 +66,7 @@ public class PostService {
     }
 
     public FindPostDTO findPost(long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("게시글 존재하지 않습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException(ErrorCode.P001));
         return new FindPostDTO(post);
     }
 
@@ -76,9 +77,9 @@ public class PostService {
     }
 
     public Long update(String email, Long id, String content, List<MultipartFile> images) throws IOException, RuntimeException {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("게시글이 존재하지 않습니다."));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(ErrorCode.P001));
         if (!isAuthorizedUser(email, post)) {
-            throw new RuntimeException("잘못된 접근입니다.");
+            throw new UnauthorizedException(ErrorCode.P002);
         }
 
         List<PostImage> removeImages = post.getImages();
@@ -105,9 +106,9 @@ public class PostService {
 
     @Transactional
     public Long delete(String email, Long id) throws RuntimeException {
-        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("잘못된 접근"));
+        Post post = postRepository.findById(id).orElseThrow(() -> new PostNotFoundException(ErrorCode.P001));
         if (!isAuthorizedUser(email, post)) {
-            throw new RuntimeException("잘못된 접근입니다.");
+            throw new UnauthorizedException(ErrorCode.P002);
         }
 
         post.getWriter().removePost(post);

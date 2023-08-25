@@ -14,7 +14,7 @@ public class ControllerAdvice extends ResponseEntityExceptionHandler {
                 .body(new ErrorResponse(exception.getErrorCode().getErrorMessage()));
     }
 
-    @ExceptionHandler(CommentNotAuthorizedException.class)
+    @ExceptionHandler(UnauthorizedException.class)
     public ResponseEntity<ErrorResponse> notAuthorizedExceptionHandler(BusinessException exception) {
         return ResponseEntity.status(exception.getErrorCode().getErrorCode())
                 .body(new ErrorResponse(exception.getErrorCode().getErrorMessage()));

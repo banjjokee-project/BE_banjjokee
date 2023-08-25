@@ -11,6 +11,7 @@ public enum ErrorCode {
 
     // Post
     P001(HttpStatus.NOT_FOUND, "존재하지 않는 컨텐츠입니다."),
+    P002(HttpStatus.FORBIDDEN, "권한이 없습니다."),
 
     // Comment
     C001(HttpStatus.NOT_FOUND,"존재하지 않는 컨텐츠입니다."),
