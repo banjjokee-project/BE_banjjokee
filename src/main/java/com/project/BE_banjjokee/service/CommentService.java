@@ -94,7 +94,7 @@ public class CommentService {
         Comment comment = commentRepository.findById(request.getCommentId()).orElseThrow(() -> new CommentNotFoundException(ErrorCode.C001));
 
         if (!isValidUser(comment, email)) {
-            throw new CommentInvalidRequestException(ErrorCode.C004);
+            throw new UnauthorizedException(ErrorCode.C002);
         }
 
         comment.change(request.getContent());
@@ -107,7 +107,7 @@ public class CommentService {
         Long postId = comment.getParent().getId();
 
         if (isValidUser(comment, email)) {
-            throw new CommentInvalidRequestException(ErrorCode.C004);
+            throw new UnauthorizedException(ErrorCode.C002);
         }
 
         comment.getWriter().removeComment(comment); // user 객체를 이용하여 comment 삭제
