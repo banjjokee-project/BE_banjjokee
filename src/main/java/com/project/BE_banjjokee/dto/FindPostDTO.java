@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class findPostDTO {
+public class FindPostDTO {
 
     private Long postId;
 
@@ -21,11 +21,9 @@ public class findPostDTO {
 
     private List<String> imageUrls;
 
-    private List<PostCommentDTO> comments;
-
     private String writer;
 
-    public findPostDTO(Post post) {
+    public FindPostDTO(Post post) {
         this.postId = post.getId();
         this.content = post.getContent();
         this.likes = post.getLikes();
@@ -38,13 +36,6 @@ public class findPostDTO {
             urls.add(image.getUrl());
         }
         this.imageUrls = urls;
-
-        List<PostCommentDTO> commentDtos = new ArrayList<>();
-        List<Comment> comments = post.getComments();
-        for (Comment comment : comments) {
-            commentDtos.add(new PostCommentDTO(comment));
-        }
-        this.comments = commentDtos;
     }
 
 }
